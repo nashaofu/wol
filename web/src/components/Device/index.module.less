@@ -1,0 +1,78 @@
+.device {
+  padding: 24px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.switch {
+  width: 48px;
+  height: 48px;
+  line-height: 48px;
+  text-align: center;
+  font-size: 48px;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.info {
+  flex-grow: 1;
+  padding-left: 24px;
+}
+
+.name {
+  line-height: 24px;
+  padding-bottom: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mac {
+  line-height: 18px;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@position-right: 24px + 20px;
+
+.online {
+  position: absolute;
+  top: 50%;
+  right: @position-right;
+  transform: translate(50%, -50%);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+}
+
+.loading {
+  position: absolute;
+  top: 50%;
+  right: @position-right;
+  transform: translate(50%, -50%);
+  font-size: 40px;
+}
+
+.edit {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.editBtn {
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  font-size: 18px;
+  border-radius: 50%;
+  cursor: pointer;
+  text-align: center;
+}

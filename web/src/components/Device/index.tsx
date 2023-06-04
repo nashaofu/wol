@@ -1,0 +1,158 @@
+import { useCallback } from 'react';
+import { Dropdown, MenuProps, theme } from 'antd';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  LoadingOutlined,
+  MoreOutlined,
+  PoweroffOutlined,
+} from '@ant-design/icons';
+import useSWR from 'swr';
+import useSWRMutation from 'swr/mutation';
+import { get } from 'lodash-es';
+import { IDevice, IDeviceStatus } from '@/types/device';
+import fetcher from '@/utils/fetcher';
+import useMessage from '@/hooks/useMessage';
+import useModal from '@/hooks/useModal';
+import DeviceEdit from '../DeviceEdit';
+import useBoolean from '@/hooks/useBoolean';
+import { useDeleteDevice } from '@/hooks/useDevices';
+import styles from './index.module.less';
+
+export interface IDeviceProps {
+  device: IDevice;
+}
+
+export default function Device({ device }: IDeviceProps) {
+  const { token } = theme.useToken();
+  const message = useMessage();
+  const modal = useModal();
+  const [open, actions] = useBoolean(false);
+  const { trigger: deleteDevice } = useDeleteDevice({
+    onSuccess: () => {
+      message.success('删除成功');
+    },
+    onError: (err) => {
+      message.error(get(err, 'response.data.message', '删除失败'));
+    },
+  });
+
+  const {
+    data: status,
+    isLoading,
+    mutate: fetchDeviceStatus,
+  } = useSWR(
+    `/device/status/${device.ip}`,
+    (url) => fetcher.get<unknown, IDeviceStatus>(url),
+    {
+      refreshInterval: 5000,
+    },
+  );
+
+  const { isMutating: isWaking, trigger: wakeDevice } = useSWRMutation(
+    '/wol/wake',
+    async (url) => {
+      await fetcher.post(url, device);
+      await new Promise<void>((resolve) => {
+        setTimeout(() => resolve(), 10000);
+      });
+      fetchDeviceStatus();
+    },
+    {
+      onError: (err) => {
+        message.error(get(err, 'response.data.message', '开机失败'));
+      },
+    },
+  );
+
+  const onWake = useCallback(() => {
+    if (isWaking) {
+      return;
+    }
+    wakeDevice();
+  }, [isWaking, wakeDevice]);
+
+  const items: MenuProps['items'] = [
+    {
+      key: 'edit',
+      icon: <EditOutlined />,
+      label: '编辑',
+      onClick: actions.setTrue,
+    },
+    {
+      key: 'delete',
+      icon: <DeleteOutlined />,
+      label: '删除',
+      onClick: () => {
+        modal.confirm({
+          title: '删除',
+          content: `确认删除设备 ${device.name} 吗？`,
+          onOk: () => deleteDevice(device),
+        });
+      },
+    },
+  ];
+
+  return (
+    <>
+      <div
+        className={styles.device}
+        style={{
+          backgroundColor: token.colorBgContainer,
+          border: `1px solid ${token.colorBorderSecondary}`,
+        }}
+      >
+        <div
+          className={styles.switch}
+          role="button"
+          tabIndex={0}
+          onClick={onWake}
+          style={{ color: token.colorWarning }}
+        >
+          <PoweroffOutlined />
+        </div>
+        <div className={styles.info}>
+          <div className={styles.name}>{device.name}</div>
+          <div className={styles.mac}>{device.mac}</div>
+        </div>
+        {status === IDeviceStatus.Online && (
+          <div
+            className={styles.online}
+            style={{
+              backgroundColor: token.colorSuccess,
+            }}
+          />
+        )}
+        {(isLoading || isWaking) && (
+          <div
+            className={styles.loading}
+            style={{
+              color: token.colorPrimaryText,
+            }}
+          >
+            <LoadingOutlined />
+          </div>
+        )}
+        <div className={styles.edit}>
+          <Dropdown
+            menu={{ items }}
+            placement="bottomRight"
+            trigger={['click']}
+            arrow={{ pointAtCenter: true }}
+          >
+            <div className={styles.editBtn}>
+              <MoreOutlined />
+            </div>
+          </Dropdown>
+        </div>
+      </div>
+
+      <DeviceEdit
+        open={open}
+        device={device}
+        onOk={actions.setFalse}
+        onCancel={actions.setFalse}
+      />
+    </>
+  );
+}

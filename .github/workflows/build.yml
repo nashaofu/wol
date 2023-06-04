@@ -1,0 +1,199 @@
+name: build
+
+on:
+  workflow_dispatch: # 手动触发
+  push:
+    branches: ["master"]
+    # Publish semver tags as releases.
+    tags: ["v*.*.*"]
+  pull_request:
+    branches: ["master"]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Use docker.io for Docker Hub if empty
+  REGISTRY: ghcr.io
+
+jobs:
+  build-web:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: latest
+          cache: "yarn"
+          cache-dependency-path: web/yarn.lock
+      - name: Build web
+        run: cd web && yarn && yarn build
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: wol-web
+          path: web/dist
+          if-no-files-found: error
+  build-server:
+    strategy:
+      fail-fast: false
+      matrix:
+        settings:
+          - target: x86_64-apple-darwin
+            host: macos-latest
+            use-cross: false
+            post-build: |
+              mkdir build && \
+              cp target/x86_64-apple-darwin/release/wol build/wol && \
+              strip -x build/wol
+          - target: aarch64-apple-darwin
+            host: macos-latest
+            use-cross: false
+            post-build: |
+              mkdir build && \
+              cp target/aarch64-apple-darwin/release/wol build/wol && \
+              strip -x build/wol
+
+          - target: x86_64-pc-windows-msvc
+            host: windows-latest
+            use-cross: false
+            post-build: |
+              md build
+              copy target/x86_64-pc-windows-msvc/release/wol.exe build/wol.exe
+          # crate ring not support: https://github.com/briansmith/ring/issues/1167
+          # - target: aarch64-pc-windows-msvc
+          #   host: windows-latest
+          #   use-cross: false
+          #   post-build: |
+          #     md build
+          #     copy target/aarch64-pc-windows-msvc/release/wol.exe build/wol.exe
+
+          - target: x86_64-unknown-linux-gnu
+            host: ubuntu-latest
+            use-cross: true
+            post-build: |
+              mkdir build && \
+              cp target/x86_64-unknown-linux-gnu/release/wol build/wol && \
+              strip -x build/wol
+          - target: x86_64-unknown-linux-musl
+            host: ubuntu-latest
+            use-cross: true
+            post-build: |
+              mkdir build && \
+              cp target/x86_64-unknown-linux-musl/release/wol build/wol && \
+              strip -x build/wol
+
+          - target: aarch64-unknown-linux-gnu
+            host: ubuntu-latest
+            use-cross: true
+            post-build: |
+              mkdir build && \
+              cp target/aarch64-unknown-linux-gnu/release/wol build/wol
+          - target: aarch64-unknown-linux-musl
+            host: ubuntu-latest
+            use-cross: true
+            post-build: |
+              mkdir build && \
+              cp target/aarch64-unknown-linux-musl/release/wol build/wol
+
+    name: build ${{ matrix.settings.target }}
+    runs-on: ${{ matrix.settings.host }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Cache cargo
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-${{ matrix.settings.target }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - name: Install rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: ${{ matrix.settings.target }}
+          override: true
+      - name: Build
+        uses: actions-rs/cargo@v1
+        with:
+          use-cross: ${{ matrix.settings.use-cross }}
+          command: build
+          args: --release --target ${{ matrix.settings.target }}
+      - name: Post build
+        run: ${{ matrix.settings.post-build }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: wol-${{ matrix.settings.target }}
+          path: build/
+          if-no-files-found: error
+
+  publish:
+    runs-on: ubuntu-latest
+    needs:
+      - build-web
+      - build-server
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Download all artifact
+        uses: actions/download-artifact@v3
+        with:
+          path: artifacts
+      - name: Display structure of downloaded files
+        run: ls -R
+        working-directory: artifacts
+      - name: Pack as zip file
+        run: ls | xargs -I filename zip -r -m filename.zip filename
+        working-directory: artifacts
+      - name: Display structure of zip files
+        run: ls -R
+        working-directory: artifacts
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: artifacts/*.zip
+
+  docker:
+    runs-on: ubuntu-latest
+    needs:
+      - build-web
+      - build-server
+      - publish
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v2
+      # Workaround: https://github.com/docker/build-push-action/issues/461
+      - name: Setup docker buildx
+        uses: docker/setup-buildx-action@v2
+
+      # Login against a Docker registry except on PR
+      # https://github.com/docker/login-action
+      - name: Login to registry ${{ env.REGISTRY }}
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker images
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/nashaofu/wol:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
