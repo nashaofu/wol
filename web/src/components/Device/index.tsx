@@ -8,16 +8,15 @@ import {
   PoweroffOutlined,
 } from '@ant-design/icons';
 import useSWR from 'swr';
-import useSWRMutation from 'swr/mutation';
 import { get } from 'lodash-es';
 import { IDevice, IDeviceStatus } from '@/types/device';
-import fetcher from '@/utils/fetcher';
 import useMessage from '@/hooks/useMessage';
 import useModal from '@/hooks/useModal';
 import DeviceEdit from '../DeviceEdit';
 import useBoolean from '@/hooks/useBoolean';
-import { useDeleteDevice } from '@/hooks/useDevices';
+import { useDeleteDevice, useWakeDevice } from '@/hooks/useDevices';
 import styles from './index.module.less';
+import fetcher from '@/utils/fetcher';
 
 export interface IDeviceProps {
   device: IDevice;
@@ -28,14 +27,6 @@ export default function Device({ device }: IDeviceProps) {
   const message = useMessage();
   const modal = useModal();
   const [open, actions] = useBoolean(false);
-  const { trigger: deleteDevice } = useDeleteDevice({
-    onSuccess: () => {
-      message.success('删除成功');
-    },
-    onError: (err) => {
-      message.error(get(err, 'response.data.message', '删除失败'));
-    },
-  });
 
   const {
     data: status,
@@ -45,32 +36,34 @@ export default function Device({ device }: IDeviceProps) {
     `/device/status/${device.ip}`,
     (url) => fetcher.get<unknown, IDeviceStatus>(url),
     {
-      refreshInterval: 5000,
+      refreshInterval: 7000,
     },
   );
 
-  const { isMutating: isWaking, trigger: wakeDevice } = useSWRMutation(
-    '/wol/wake',
-    async (url) => {
-      await fetcher.post(url, device);
-      await new Promise<void>((resolve) => {
-        setTimeout(() => resolve(), 10000);
-      });
+  const { isMutating: isWaking, trigger: wakeDevice } = useWakeDevice({
+    onSuccess: () => {
       fetchDeviceStatus();
     },
-    {
-      onError: (err) => {
-        message.error(get(err, 'response.data.message', '开机失败'));
-      },
+    onError: (err) => {
+      message.error(get(err, 'response.data.message', '开机失败'));
     },
-  );
+  });
+
+  const { trigger: deleteDevice } = useDeleteDevice({
+    onSuccess: () => {
+      message.success('删除成功');
+    },
+    onError: (err) => {
+      message.error(get(err, 'response.data.message', '删除失败'));
+    },
+  });
 
   const onWake = useCallback(() => {
     if (isWaking) {
       return;
     }
-    wakeDevice();
-  }, [isWaking, wakeDevice]);
+    wakeDevice(device);
+  }, [isWaking, device, wakeDevice]);
 
   const items: MenuProps['items'] = [
     {

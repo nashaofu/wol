@@ -11,7 +11,7 @@ IDevice[],
 '/device/save'
 >;
 
-export function useDevices(config?: SWRConfiguration) {
+export function useDevices(config?: SWRConfiguration<IDevice[]>) {
   return useSWR<IDevice[]>(
     '/device/all',
     async (url) => {
@@ -98,4 +98,20 @@ export function useDeleteDevice(config?: UseSaveDevicesConfig) {
     ...saveDevices,
     trigger: (device: IDevice) => saveDevices.trigger(devices.filter((item) => item.uid !== device.uid)),
   };
+}
+
+export function useWakeDevice(
+  config?: SWRMutationConfiguration<void, Error, IDevice, '/device/wake'>,
+) {
+  return useSWRMutation(
+    '/device/wake',
+    async (url, { arg }: { arg: IDevice }) => {
+      await fetcher.post(url, arg);
+      // 延迟 10s, 等待机器开机
+      await new Promise<void>((resolve) => {
+        setTimeout(() => resolve(), 10000);
+      });
+    },
+    config,
+  );
 }

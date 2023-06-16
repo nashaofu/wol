@@ -29,10 +29,6 @@ export default function Header() {
     [setThemeValue],
   );
 
-  const onCreateOk = useCallback(() => {
-    actions.setFalse();
-  }, [actions]);
-
   return (
     <>
       <Layout.Header>
@@ -56,7 +52,11 @@ export default function Header() {
           </div>
         </div>
       </Layout.Header>
-      <DeviceEdit open={open} onOk={onCreateOk} onCancel={actions.setFalse} />
+      <DeviceEdit
+        open={open}
+        onOk={actions.setFalse}
+        onCancel={actions.setFalse}
+      />
     </>
   );
 }

@@ -1,6 +1,7 @@
 use crate::{
   errors::Result,
   settings::{Device, SETTINGS},
+  wol,
 };
 
 use actix_web::{get, post, web, HttpResponse, Responder};
@@ -19,6 +20,12 @@ async fn save(data: web::Json<Vec<Device>>) -> Result<impl Responder> {
   settings.save()?;
 
   Ok(HttpResponse::Ok().json(&settings.devices))
+}
+
+#[post("/wake")]
+async fn wake(data: web::Json<wol::WakeData>) -> Result<impl Responder> {
+  wol::wake(&data)?;
+  Ok(HttpResponse::Ok().json(&data))
 }
 
 #[derive(Debug, Serialize, Deserialize)]
