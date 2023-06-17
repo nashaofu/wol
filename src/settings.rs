@@ -7,6 +7,7 @@ use config::{Config, File};
 use lazy_static::lazy_static;
 use serde::{Deserialize, Serialize};
 use serde_yaml;
+use tracing::debug;
 
 lazy_static! {
   pub static ref CONFIG_FILE: PathBuf = env::current_dir()
@@ -50,7 +51,7 @@ impl Settings {
 
     let settings = Settings { user, devices };
 
-    log::debug!("Init settings: {:?}", settings);
+    debug!("Init settings: {:?}", settings);
     settings.save()?;
     Ok(settings)
   }

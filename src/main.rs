@@ -4,46 +4,33 @@ pub mod errors;
 pub mod settings;
 pub mod wol;
 
-use actix_files::{Files, NamedFile};
-use actix_web::{
-  dev::{fn_service, ServiceRequest, ServiceResponse},
-  middleware::{Logger, NormalizePath},
-  web, App, HttpServer,
-};
+use anyhow::Result;
+use axum::Server;
 use dotenv::dotenv;
-use std::io;
+use std::net::{Ipv4Addr, SocketAddr, SocketAddrV4};
+use tower_http::services::{ServeDir, ServeFile};
+use tracing::info;
+use tracing_subscriber::{fmt, prelude::*, registry, EnvFilter};
 
 use args::ARGS;
 
-#[actix_web::main]
-async fn main() -> Result<(), io::Error> {
-  dotenv().ok();
+#[tokio::main]
+async fn main() -> Result<()> {
+  dotenv()?;
 
-  env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
+  registry()
+    .with(fmt::layer())
+    .with(EnvFilter::try_from_default_env().unwrap_or_else(|_| "info".into()))
+    .init();
 
-  log::info!("starting HTTP server at http://0.0.0.0:{}", ARGS.port);
+  let socket_addr = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::UNSPECIFIED, ARGS.port));
+  info!("starting HTTP server at http://{}", socket_addr);
 
-  HttpServer::new(|| {
-    App::new()
-      .wrap(NormalizePath::trim())
-      .service(
-        web::scope("/api")
-          .wrap(Logger::default())
-          .configure(api::init),
-      )
-      .service(
-        Files::new("/", "./www")
-          .index_file("index.html")
-          .use_etag(true)
-          .default_handler(fn_service(|req: ServiceRequest| async {
-            let (req, _) = req.into_parts();
-            let file = NamedFile::open_async("./www/index.html").await?;
-            let res = file.into_response(&req);
-            Ok(ServiceResponse::new(req, res))
-          })),
-      )
-  })
-  .bind(("0.0.0.0", ARGS.port))?
-  .run()
-  .await
+  let serve_dir = ServeDir::new("www").fallback(ServeFile::new("www/index.html"));
+
+  Server::bind(&socket_addr)
+    .serve(api::init().nest_service("/", serve_dir).into_make_service())
+    .await?;
+
+  Ok(())
 }

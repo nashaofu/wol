@@ -4,28 +4,29 @@ use crate::{
   wol,
 };
 
-use actix_web::{get, post, web, HttpResponse, Responder};
+use axum::{extract::Path, response::IntoResponse, Json};
 use serde::{Deserialize, Serialize};
 use surge_ping;
 
-#[get("/all")]
-async fn all() -> Result<impl Responder> {
-  Ok(HttpResponse::Ok().json(&SETTINGS.read()?.devices))
+pub async fn all() -> Result<impl IntoResponse> {
+  let devices = SETTINGS.read()?.devices.clone();
+
+  Ok(Json(devices))
 }
 
-#[post("/save")]
-async fn save(data: web::Json<Vec<Device>>) -> Result<impl Responder> {
+pub async fn save(Json(data): Json<Vec<Device>>) -> Result<impl IntoResponse> {
   let settings = &mut SETTINGS.write()?;
   settings.devices = data.clone();
   settings.save()?;
 
-  Ok(HttpResponse::Ok().json(&settings.devices))
+  let devices = settings.devices.clone();
+
+  Ok(Json(devices))
 }
 
-#[post("/wake")]
-async fn wake(data: web::Json<wol::WakeData>) -> Result<impl Responder> {
+pub async fn wake(data: Json<wol::WakeData>) -> Result<impl IntoResponse> {
   wol::wake(&data)?;
-  Ok(HttpResponse::Ok().json(&data))
+  Ok(())
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -39,8 +40,7 @@ pub enum DeviceStatus {
   Offline,
 }
 
-#[get("/status/{ip}")]
-async fn status(ip: web::Path<String>) -> Result<impl Responder> {
+pub async fn status(Path(ip): Path<String>) -> Result<impl IntoResponse> {
   let payload = [0; 8];
   let device = ip.parse()?;
 
@@ -49,5 +49,5 @@ async fn status(ip: web::Path<String>) -> Result<impl Responder> {
     .map(|_| DeviceStatus::Online)
     .unwrap_or(DeviceStatus::Offline);
 
-  Ok(HttpResponse::Ok().json(device_status))
+  Ok(Json(device_status))
 }

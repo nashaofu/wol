@@ -1,8 +1,13 @@
-use actix_web::{body::BoxBody, http::StatusCode, HttpResponse, ResponseError};
+use axum::{
+  http::StatusCode,
+  response::{IntoResponse, Response},
+  Json,
+};
 use serde::Serialize;
 use serde_yaml;
 use std::{error::Error, fmt, io, net::AddrParseError, result, sync::PoisonError};
 use surge_ping::SurgeError;
+use tracing::error;
 
 pub type Result<T, E = AppError> = result::Result<T, E>;
 
@@ -40,57 +45,57 @@ impl AppError {
   }
 }
 
-impl ResponseError for AppError {
-  fn status_code(&self) -> StatusCode {
-    self.status
-  }
-
-  fn error_response(&self) -> HttpResponse<BoxBody> {
-    HttpResponse::build(self.status_code()).json(AppErrorJson {
-      code: self.code,
-      message: self.message.clone(),
-    })
+impl IntoResponse for AppError {
+  fn into_response(self) -> Response {
+    (
+      self.status,
+      Json(AppErrorJson {
+        code: self.code,
+        message: self.message,
+      }),
+    )
+      .into_response()
   }
 }
 
 impl From<anyhow::Error> for AppError {
   fn from(err: anyhow::Error) -> Self {
-    log::error!("anyhow::Error {}", err);
+    error!("anyhow::Error {}", err);
     AppError::new(StatusCode::INTERNAL_SERVER_ERROR, 500, err.to_string())
   }
 }
 
 impl From<AddrParseError> for AppError {
   fn from(err: AddrParseError) -> Self {
-    log::error!("AddrParseError {}", err);
+    error!("AddrParseError {}", err);
     AppError::new(StatusCode::INTERNAL_SERVER_ERROR, 500, err.to_string())
   }
 }
 
 impl From<SurgeError> for AppError {
   fn from(err: SurgeError) -> Self {
-    log::error!("SurgeError {}", err);
+    error!("SurgeError {}", err);
     AppError::new(StatusCode::INTERNAL_SERVER_ERROR, 500, err.to_string())
   }
 }
 
 impl<T> From<PoisonError<T>> for AppError {
   fn from(err: PoisonError<T>) -> Self {
-    log::error!("PoisonError<T> {}", err);
+    error!("PoisonError<T> {}", err);
     AppError::new(StatusCode::INTERNAL_SERVER_ERROR, 500, err.to_string())
   }
 }
 
 impl From<io::Error> for AppError {
   fn from(err: io::Error) -> Self {
-    log::error!("io::Error {}", err);
+    error!("io::Error {}", err);
     AppError::new(StatusCode::INTERNAL_SERVER_ERROR, 500, err.to_string())
   }
 }
 
 impl From<serde_yaml::Error> for AppError {
   fn from(err: serde_yaml::Error) -> Self {
-    log::error!("serde_yaml::Error {}", err);
+    error!("serde_yaml::Error {}", err);
     AppError::new(StatusCode::INTERNAL_SERVER_ERROR, 500, err.to_string())
   }
 }

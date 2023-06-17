@@ -6,16 +6,16 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-actix-files = "0.6.2"
-actix-web = "4.3.1"
-actix-web-httpauth = "0.8.0"
 anyhow = "1.0.71"
+axum = "0.6.18"
 clap = { version = "4.3.1", features = ["derive"] }
 config = "0.13.3"
 dotenv = "0.15.0"
-env_logger = "0.10.0"
 lazy_static = "1.4.0"
-log = "0.4.18"
 serde = "1.0.163"
 serde_yaml = "0.9.21"
 surge-ping = "0.8.0"
+tokio = { version = "1.28.2", features = ["full"] }
+tower-http = { version = "0.4.0", features = ["fs", "trace"] }
+tracing = "0.1.37"
+tracing-subscriber = { version = "0.3.17", features = ["env-filter"] }
