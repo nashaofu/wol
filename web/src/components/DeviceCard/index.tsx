@@ -9,7 +9,7 @@ import {
 } from '@ant-design/icons';
 import useSWR from 'swr';
 import { get } from 'lodash-es';
-import { IDevice, IDeviceStatus } from '@/types/device';
+import { Device, DeviceStatus } from '@/types/device';
 import useMessage from '@/hooks/useMessage';
 import useModal from '@/hooks/useModal';
 import DeviceEdit from '../DeviceEdit';
@@ -18,11 +18,11 @@ import { useDeleteDevice, useWakeDevice } from '@/hooks/useDevices';
 import styles from './index.module.less';
 import fetcher from '@/utils/fetcher';
 
-export interface IDeviceProps {
-  device: IDevice;
+export interface DeviceCardProps {
+  device: Device;
 }
 
-export default function Device({ device }: IDeviceProps) {
+export default function DeviceCard({ device }: DeviceCardProps) {
   const { token } = theme.useToken();
   const message = useMessage();
   const modal = useModal();
@@ -34,7 +34,7 @@ export default function Device({ device }: IDeviceProps) {
     mutate: fetchDeviceStatus,
   } = useSWR(
     `/device/status/${device.ip}`,
-    (url) => fetcher.get<unknown, IDeviceStatus>(url),
+    (url) => fetcher.get<unknown, DeviceStatus>(url),
     {
       refreshInterval: 7000,
     },
@@ -108,7 +108,7 @@ export default function Device({ device }: IDeviceProps) {
           <div className={styles.name}>{device.name}</div>
           <div className={styles.mac}>{device.mac}</div>
         </div>
-        {status === IDeviceStatus.Online && (
+        {status === DeviceStatus.Online && (
           <div
             className={styles.online}
             style={{

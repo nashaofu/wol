@@ -2,20 +2,20 @@ import useSWR, { SWRConfiguration } from 'swr';
 import useSWRMutation, { SWRMutationConfiguration } from 'swr/mutation';
 import { nanoid } from 'nanoid';
 import fetcher from '@/utils/fetcher';
-import { IDevice } from '@/types/device';
+import { Device } from '@/types/device';
 
 type UseSaveDevicesConfig = SWRMutationConfiguration<
-IDevice[],
+Device[],
 Error,
-IDevice[],
+Device[],
 '/device/save'
 >;
 
-export function useDevices(config?: SWRConfiguration<IDevice[]>) {
-  return useSWR<IDevice[]>(
+export function useDevices(config?: SWRConfiguration<Device[]>) {
+  return useSWR<Device[]>(
     '/device/all',
     async (url) => {
-      const resp = await fetcher.get<unknown, Omit<IDevice, 'uid'>[]>(url);
+      const resp = await fetcher.get<unknown, Omit<Device, 'uid'>[]>(url);
       const devices = resp.map((item) => ({
         ...item,
         uid: nanoid(),
@@ -34,8 +34,8 @@ export function useSaveDevices(config?: UseSaveDevicesConfig) {
   const { mutate } = useDevices();
   return useSWRMutation(
     '/device/save',
-    async (url, { arg }: { arg: IDevice[] }) => {
-      const resp = await fetcher.post<unknown, Omit<IDevice, 'uid'>[]>(
+    async (url, { arg }: { arg: Device[] }) => {
+      const resp = await fetcher.post<unknown, Omit<Device, 'uid'>[]>(
         url,
         arg.map((item) => ({
           ...item,
@@ -43,7 +43,7 @@ export function useSaveDevices(config?: UseSaveDevicesConfig) {
         })),
       );
 
-      const devices: IDevice[] = resp.map((item) => ({
+      const devices: Device[] = resp.map((item) => ({
         ...item,
         uid: nanoid(),
       }));
@@ -62,7 +62,7 @@ export function useAddDevice(config?: UseSaveDevicesConfig) {
 
   return {
     ...saveDevices,
-    trigger: (device: Omit<IDevice, 'uid'>) => {
+    trigger: (device: Omit<Device, 'uid'>) => {
       devices.push({
         ...device,
         uid: nanoid(),
@@ -79,7 +79,7 @@ export function useUpdateDevice(config?: UseSaveDevicesConfig) {
 
   return {
     ...saveDevices,
-    trigger: (device: IDevice) => {
+    trigger: (device: Device) => {
       const index = devices.findIndex((item) => item.uid === device.uid);
       if (index !== -1) {
         devices[index] = device;
@@ -96,16 +96,16 @@ export function useDeleteDevice(config?: UseSaveDevicesConfig) {
 
   return {
     ...saveDevices,
-    trigger: (device: IDevice) => saveDevices.trigger(devices.filter((item) => item.uid !== device.uid)),
+    trigger: (device: Device) => saveDevices.trigger(devices.filter((item) => item.uid !== device.uid)),
   };
 }
 
 export function useWakeDevice(
-  config?: SWRMutationConfiguration<void, Error, IDevice, '/device/wake'>,
+  config?: SWRMutationConfiguration<void, Error, Device, '/device/wake'>,
 ) {
   return useSWRMutation(
     '/device/wake',
-    async (url, { arg }: { arg: IDevice }) => {
+    async (url, { arg }: { arg: Device }) => {
       await fetcher.post(url, arg);
       // 延迟 10s, 等待机器开机
       await new Promise<void>((resolve) => {

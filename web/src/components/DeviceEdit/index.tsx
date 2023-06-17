@@ -3,14 +3,14 @@ import {
   Form, Input, Modal, InputNumber,
 } from 'antd';
 import { get } from 'lodash-es';
-import { IDevice } from '@/types/device';
+import { Device } from '@/types/device';
 import useMessage from '@/hooks/useMessage';
 import { useAddDevice, useUpdateDevice } from '@/hooks/useDevices';
 
-export type IDeviceEditModel = Omit<IDevice, 'uid'>;
+export type DeviceEditModel = Omit<Device, 'uid'>;
 
-export interface IDeviceEditProps {
-  device?: IDevice | null;
+export interface DeviceEditProps {
+  device?: Device | null;
   open: boolean;
   onOk: () => unknown;
   onCancel: () => unknown;
@@ -21,8 +21,8 @@ export default function DeviceEdit({
   open,
   onOk,
   onCancel,
-}: IDeviceEditProps) {
-  const [form] = Form.useForm<IDeviceEditModel>();
+}: DeviceEditProps) {
+  const [form] = Form.useForm<DeviceEditModel>();
   const message = useMessage();
   const { isMutating: addDeviceLoading, trigger: addDevice } = useAddDevice({
     onSuccess: () => {

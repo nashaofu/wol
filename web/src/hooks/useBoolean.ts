@@ -1,14 +1,14 @@
 import { useMemo, useState } from 'react';
 
-type IUseBooleanOpts = boolean | (() => boolean);
-interface IUseBooleanAction {
+type UseBooleanOpts = boolean | (() => boolean);
+interface UseBooleanAction {
   setTrue: () => void;
   setFalse: () => void;
 }
 
 export default function useBoolean(
-  defaultValue: IUseBooleanOpts = false,
-): [boolean, IUseBooleanAction] {
+  defaultValue: UseBooleanOpts = false,
+): [boolean, UseBooleanAction] {
   const [state, setState] = useState(defaultValue);
 
   const actions = useMemo(

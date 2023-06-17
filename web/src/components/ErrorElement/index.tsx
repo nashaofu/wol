@@ -1,11 +1,11 @@
 import { Button, Result, theme } from 'antd';
 import styles from './index.module.less';
 
-export interface IErrorElementProps {
+export interface ErrorElementProps {
   message?: string;
 }
 
-export default function ErrorElement({ message }: IErrorElementProps) {
+export default function ErrorElement({ message }: ErrorElementProps) {
   const { token } = theme.useToken();
 
   return (
