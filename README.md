@@ -20,14 +20,14 @@ Wol 是 wake on lan 的简写，是一个轻量、简介的 Wol 管理服务，�
 docker pull ghcr.io/nashaofu/wol:latest
 docker run -d \
   --name wol \
-  -p 3000:3000 \
-  -v /path/to:/opt/wol \
+  -p 3300:3300 \
+  -v /path/to/wol.yaml:/opt/wol/yaml \
   ghcr.io/nashaofu/wol:latest
 ```
 
-然后在浏览器中访问 `http://127.0.0.1:3000` 即可使用。
+然后在浏览器中访问 `http://127.0.0.1:3300` 即可使用。
 
-如果需要自定义配置，可将项目根目录下的 `wol.example.yaml` 文件拷贝到 `/opt/wol` 目录下并重命名为 `wol.yaml`，具体配置参考配置章节。
+如果需要自定义配置，可将项目根目录下的 `wol.example.yaml` 文件拷贝到 `/opt/wol` 目录下并重命名为 `wol.yaml`，具体配置参考配置章节，也可以修改启动命令，指定配置文件位置。
 
 ### 系统中使用
 
@@ -48,7 +48,7 @@ docker run -d \
    Usage: wol [OPTIONS]
 
    Options:
-     -p, --port <PORT>      App listen port [default: 3000]
+     -p, --port <PORT>      App listen port [default: 3300]
      -c, --config <CONFIG>  Config file path [default: ./wol.yaml]
      -h, --help             Print help
      -V, --version          Print version
@@ -66,7 +66,7 @@ devices:
   - name: Windows # 设备名称
     mac: 00:00:00:00:00:00 # 设备 mac 地址
     ip: 192.168.1.1 # 设备 ipv4 地址
-    port: 9 # wake on lan 唤醒端口号，一般为9、7 或者 0
+    port: 9 # wake on lan 唤醒端口号，一般为 9、7 或者 0
 ```
 
 ## 贡献指南
@@ -111,4 +111,4 @@ devices:
 
 ## 许可证
 
-Wol 使用 MIT 许可证，详情请参阅 [LICENSE](LICENSE) 文件。
+Wol 使用 Apache 许可证，详情请参阅 [LICENSE](LICENSE) 文件。

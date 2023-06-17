@@ -9,7 +9,7 @@ lazy_static! {
 #[command(author, version, about, long_about = None)]
 pub struct Args {
   /// App listen port
-  #[arg(short, long, default_value_t = 3000)]
+  #[arg(short, long, default_value_t = 3300)]
   pub port: u16,
 
   /// Config file path
