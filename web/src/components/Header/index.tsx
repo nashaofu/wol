@@ -31,7 +31,7 @@ export default function Header() {
 
   return (
     <>
-      <Layout.Header>
+      <Layout.Header className={styles.header}>
         <div className={styles.container} style={style}>
           <div className={styles.logo}>Wol</div>
           <div className={styles.buttons}>
@@ -42,7 +42,7 @@ export default function Header() {
               onChange={onThemeValueChange}
             />
             <div
-              className={styles.createDevice}
+              className={styles.addDevice}
               role="button"
               tabIndex={0}
               onClick={actions.setTrue}

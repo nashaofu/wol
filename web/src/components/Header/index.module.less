@@ -1,6 +1,7 @@
 .header {
-  height: 64px;
-  background-color: #343a40;
+  @media (max-width: 575px) {
+    padding-inline: 20px;
+  }
 }
 
 .container {
@@ -21,7 +22,7 @@
   align-items: center;
 }
 
-.createDevice {
+.addDevice {
   margin-left: 16px;
   font-size: 20px;
   cursor: pointer;

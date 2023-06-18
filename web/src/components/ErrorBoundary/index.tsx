@@ -1,19 +1,19 @@
 import { Component, ErrorInfo, ReactNode } from 'react';
 import ErrorElement from '../ErrorElement';
 
-export interface IErrorBoundaryProps {
+export interface ErrorBoundaryProps {
   children: ReactNode;
 }
 
-export interface IErrorBoundaryState {
+export interface ErrorBoundaryState {
   error: Error | null;
 }
 
 export default class ErrorBoundary extends Component<
-IErrorBoundaryProps,
-IErrorBoundaryState
+ErrorBoundaryProps,
+ErrorBoundaryState
 > {
-  constructor(props: IErrorBoundaryProps) {
+  constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { error: null };
   }

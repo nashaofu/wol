@@ -1,4 +1,4 @@
-export interface IDevice {
+export interface Device {
   uid: string;
   name: string;
   mac: string;
@@ -6,7 +6,7 @@ export interface IDevice {
   port: number;
 }
 
-export enum IDeviceStatus {
+export enum DeviceStatus {
   Online = 'Online',
   Offline = 'Offline',
 }

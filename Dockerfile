@@ -15,11 +15,9 @@ WORKDIR /opt/wol
 
 COPY --from=builder /build/wol .
 
-EXPOSE 3000
-VOLUME ["/opt/wol"]
+EXPOSE 3300
 
 ENV RUST_LOG=info \
-  RUST_BACKTRACE=1 \
-  DATA_DIR=/opt/wol/data
+  RUST_BACKTRACE=1
 
 CMD ["/opt/wol/wol"]
