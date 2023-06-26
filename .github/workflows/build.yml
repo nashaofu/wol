@@ -166,8 +166,6 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     needs:
-      - build-web
-      - build-server
       - publish
     steps:
       - name: Checkout repository
