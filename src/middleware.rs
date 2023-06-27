@@ -108,10 +108,10 @@ where
     let service = Rc::clone(&self.service);
 
     Box::pin(async move {
-      let user = &SETTINGS.read().unwrap().user;
-      if let Some(user) = user {
+      let auth = &SETTINGS.read().unwrap().auth;
+      if let Some(auth) = auth {
         let (user_id, password) = parse_header(&req).map_err(|_| BasicAuthError)?;
-        if user.username == user_id && user.password == password {
+        if auth.username == user_id && auth.password == password {
           let res = service.call(req).await?;
           Ok(res)
         } else {

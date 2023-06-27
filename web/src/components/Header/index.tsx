@@ -4,10 +4,10 @@ import {
   BulbOutlined,
   BulbFilled,
   PlusCircleOutlined,
-  SettingOutlined,
+  LockOutlined,
 } from '@ant-design/icons';
 import useTheme, { ITheme } from '@/hooks/useTheme';
-import UserEdit from '../UserEdit';
+import AuthEdit from '../AuthEdit';
 import DeviceEdit from '../DeviceEdit';
 import useBoolean from '@/hooks/useBoolean';
 import styles from './index.module.less';
@@ -15,7 +15,7 @@ import styles from './index.module.less';
 export default function Header() {
   const [themeValue, setThemeValue] = useTheme();
   const [deviceEditOpen, deviceEditActions] = useBoolean(false);
-  const [userEditOpen, userEditActions] = useBoolean(false);
+  const [authEditOpen, authEditActions] = useBoolean(false);
   const { token } = theme.useToken();
   const style = {
     color: token.colorTextLightSolid,
@@ -45,29 +45,29 @@ export default function Header() {
               onChange={onThemeValueChange}
             />
             <div
-              className={styles.editUser}
-              role="button"
-              tabIndex={0}
-              onClick={userEditActions.setTrue}
-            >
-              <SettingOutlined />
-            </div>
-            <div
-              className={styles.addDevice}
+              className={styles.button}
               role="button"
               tabIndex={0}
               onClick={deviceEditActions.setTrue}
             >
               <PlusCircleOutlined />
             </div>
+            <div
+              className={styles.button}
+              role="button"
+              tabIndex={0}
+              onClick={authEditActions.setTrue}
+            >
+              <LockOutlined />
+            </div>
           </div>
         </div>
       </Layout.Header>
 
-      <UserEdit
-        open={userEditOpen}
-        onOk={userEditActions.setFalse}
-        onCancel={userEditActions.setFalse}
+      <AuthEdit
+        open={authEditOpen}
+        onOk={authEditActions.setFalse}
+        onCancel={authEditActions.setFalse}
       />
 
       <DeviceEdit
