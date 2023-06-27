@@ -16,7 +16,7 @@ lazy_static! {
     RwLock::new(Settings::init().expect("Settings init failed"));
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct User {
   pub username: String,
   pub password: Option<String>,
