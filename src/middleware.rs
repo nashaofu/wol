@@ -7,16 +7,19 @@ use std::{
 use actix_web::{
   body::BoxBody,
   dev::{forward_ready, Service, ServiceRequest, ServiceResponse, Transform},
-  http::{header::{AUTHORIZATION, WWW_AUTHENTICATE}, StatusCode},
+  http::{
+    header::{AUTHORIZATION, WWW_AUTHENTICATE},
+    StatusCode,
+  },
   Error, HttpResponse, ResponseError,
 };
 use anyhow::{anyhow, Result};
 use base64::prelude::{Engine, BASE64_STANDARD};
 use futures_util::future::LocalBoxFuture;
 
-use crate::settings::SETTINGS;
+use crate::{errors::AppError, settings::SETTINGS};
 
-fn parse_header(req: &ServiceRequest) -> Result<(String, Option<String>)> {
+fn parse_header(req: &ServiceRequest) -> Result<(String, String)> {
   let header = req
     .headers()
     .get(AUTHORIZATION)
@@ -48,13 +51,7 @@ fn parse_header(req: &ServiceRequest) -> Result<(String, Option<String>)> {
   let password = credentials
     .next()
     .ok_or(anyhow!("failed get password"))
-    .map(|password| {
-      if password.is_empty() {
-        None
-      } else {
-        Some(password.to_string().into())
-      }
-    })?;
+    .map(|password| password.to_string().into())?;
 
   Ok((user_id, password))
 }
@@ -104,13 +101,18 @@ where
   forward_ready!(service);
 
   fn call(&self, req: ServiceRequest) -> Self::Future {
-    // let fut = self.service.call(req);
     let service = Rc::clone(&self.service);
 
     Box::pin(async move {
-      let auth = &SETTINGS.read().unwrap().auth;
+      let auth = {
+        // 确保锁被释放掉, 否则 RwLock 会死锁
+        let auth = &SETTINGS.read().map_err(|err| AppError::from(err))?.auth;
+
+        auth.clone()
+      };
       if let Some(auth) = auth {
         let (user_id, password) = parse_header(&req).map_err(|_| BasicAuthError)?;
+        log::info!("userid{} {:?}", user_id, password);
         if auth.username == user_id && auth.password == password {
           let res = service.call(req).await?;
           Ok(res)

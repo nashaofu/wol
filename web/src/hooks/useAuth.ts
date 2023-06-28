@@ -1,4 +1,4 @@
-import useSWR, { SWRConfiguration } from 'swr';
+import useSWR, { SWRConfiguration, useSWRConfig } from 'swr';
 import useSWRMutation, { SWRMutationConfiguration } from 'swr/mutation';
 import fetcher from '@/utils/fetcher';
 import { Auth } from '@/types/auth';
@@ -22,16 +22,21 @@ export function useAuth(config?: SWRConfiguration<Auth | null>) {
 }
 
 export function useSaveAuth(config?: UseSaveAuthConfig) {
-  const { mutate } = useAuth();
+  const { mutate } = useSWRConfig();
+
   return useSWRMutation(
     '/auth/save',
     async (url, { arg }: { arg: Auth }) => {
       const resp = await fetcher.post<unknown, Auth>(url, arg);
-
-      await mutate(resp);
-
       return resp;
     },
-    config,
+    {
+      ...config,
+      onSuccess: (resp, ...args) => {
+        config?.onSuccess(resp, ...args);
+        // 清理所有本地数据
+        mutate(() => true, undefined, { revalidate: true });
+      },
+    },
   );
 }

@@ -1,8 +1,9 @@
 import { useCallback, useEffect } from 'react';
 import {
-  Form, Input, Modal, Switch,
+ Form, Input, Modal, Switch
 } from 'antd';
 import { get } from 'lodash-es';
+import { useSWRConfig } from 'swr';
 import useMessage from '@/hooks/useMessage';
 import { useAuth, useSaveAuth } from '@/hooks/useAuth';
 import { Auth } from '@/types/auth';
@@ -84,7 +85,13 @@ export default function AuthEdit({ open, onOk, onCancel }: AuthEditProps) {
         onFinish={onFinish}
         scrollToFirstError
       >
-        <Form.Item label="是否启用" name="enable" required validateFirst>
+        <Form.Item
+          label="是否启用"
+          name="enable"
+          required
+          validateFirst
+          valuePropName="checked"
+        >
           <Switch checkedChildren="启用" unCheckedChildren="关闭" />
         </Form.Item>
         {enableValue && (
@@ -111,7 +118,7 @@ export default function AuthEdit({ open, onOk, onCancel }: AuthEditProps) {
             </Form.Item>
             <Form.Item
               label="密码"
-              name="mac"
+              name="password"
               rules={[
                 {
                   type: 'string',

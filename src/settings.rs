@@ -19,7 +19,7 @@ lazy_static! {
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Auth {
   pub username: String,
-  pub password: Option<String>,
+  pub password: String,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -30,7 +30,7 @@ pub struct Device {
   pub port: Option<u16>,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Clone, Serialize)]
 pub struct Settings {
   pub auth: Option<Auth>,
   pub devices: Vec<Device>,
