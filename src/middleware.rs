@@ -112,7 +112,6 @@ where
       };
       if let Some(auth) = auth {
         let (user_id, password) = parse_header(&req).map_err(|_| BasicAuthError)?;
-        log::info!("userid{} {:?}", user_id, password);
         if auth.username == user_id && auth.password == password {
           let res = service.call(req).await?;
           Ok(res)
