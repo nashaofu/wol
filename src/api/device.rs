@@ -29,11 +29,6 @@ async fn wake(data: web::Json<wol::WakeData>) -> Result<impl Responder> {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct PingData {
-  ip: String,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
 pub enum DeviceStatus {
   Online,
   Offline,

@@ -8,7 +8,7 @@ pub type Result<T, E = AppError> = result::Result<T, E>;
 
 #[derive(Debug)]
 pub struct AppError {
-  pub status: StatusCode,
+  pub status_code: StatusCode,
   pub code: u16,
   pub message: String,
 }
@@ -27,9 +27,9 @@ pub struct AppErrorJson {
 }
 
 impl AppError {
-  pub fn new<M: ToString>(status: StatusCode, code: u16, message: M) -> Self {
+  pub fn new<M: ToString>(status_code: StatusCode, code: u16, message: M) -> Self {
     AppError {
-      status,
+      status_code,
       code,
       message: message.to_string(),
     }
@@ -42,7 +42,7 @@ impl AppError {
 
 impl ResponseError for AppError {
   fn status_code(&self) -> StatusCode {
-    self.status
+    self.status_code
   }
 
   fn error_response(&self) -> HttpResponse<BoxBody> {

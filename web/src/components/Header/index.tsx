@@ -4,15 +4,18 @@ import {
   BulbOutlined,
   BulbFilled,
   PlusCircleOutlined,
+  LockOutlined,
 } from '@ant-design/icons';
 import useTheme, { ITheme } from '@/hooks/useTheme';
+import AuthEdit from '../AuthEdit';
 import DeviceEdit from '../DeviceEdit';
 import useBoolean from '@/hooks/useBoolean';
 import styles from './index.module.less';
 
 export default function Header() {
   const [themeValue, setThemeValue] = useTheme();
-  const [open, actions] = useBoolean(false);
+  const [deviceEditOpen, deviceEditActions] = useBoolean(false);
+  const [authEditOpen, authEditActions] = useBoolean(false);
   const { token } = theme.useToken();
   const style = {
     color: token.colorTextLightSolid,
@@ -42,20 +45,35 @@ export default function Header() {
               onChange={onThemeValueChange}
             />
             <div
-              className={styles.addDevice}
+              className={styles.button}
               role="button"
               tabIndex={0}
-              onClick={actions.setTrue}
+              onClick={deviceEditActions.setTrue}
             >
               <PlusCircleOutlined />
+            </div>
+            <div
+              className={styles.button}
+              role="button"
+              tabIndex={0}
+              onClick={authEditActions.setTrue}
+            >
+              <LockOutlined />
             </div>
           </div>
         </div>
       </Layout.Header>
+
+      <AuthEdit
+        open={authEditOpen}
+        onOk={authEditActions.setFalse}
+        onCancel={authEditActions.setFalse}
+      />
+
       <DeviceEdit
-        open={open}
-        onOk={actions.setFalse}
-        onCancel={actions.setFalse}
+        open={deviceEditOpen}
+        onOk={deviceEditActions.setFalse}
+        onCancel={deviceEditActions.setFalse}
       />
     </>
   );

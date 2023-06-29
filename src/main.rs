@@ -1,6 +1,7 @@
 pub mod api;
 pub mod args;
 pub mod errors;
+pub mod middleware;
 pub mod settings;
 pub mod wol;
 
@@ -14,6 +15,7 @@ use dotenv::dotenv;
 use std::io;
 
 use args::ARGS;
+use middleware::BasicAuth;
 
 #[actix_web::main]
 async fn main() -> Result<(), io::Error> {
@@ -26,6 +28,7 @@ async fn main() -> Result<(), io::Error> {
   HttpServer::new(|| {
     App::new()
       .wrap(NormalizePath::trim())
+      .wrap(BasicAuth)
       .service(
         web::scope("/api")
           .wrap(Logger::default())

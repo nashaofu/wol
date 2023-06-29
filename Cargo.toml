@@ -8,12 +8,13 @@ edition = "2021"
 [dependencies]
 actix-files = "0.6.2"
 actix-web = "4.3.1"
-actix-web-httpauth = "0.8.0"
 anyhow = "1.0.71"
+base64 = "0.21.2"
 clap = { version = "4.3.1", features = ["derive"] }
 config = "0.13.3"
 dotenv = "0.15.0"
 env_logger = "0.10.0"
+futures-util = { version = "0.3.28", default-features = false }
 lazy_static = "1.4.0"
 log = "0.4.18"
 serde = "1.0.163"

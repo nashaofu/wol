@@ -16,10 +16,10 @@ lazy_static! {
     RwLock::new(Settings::init().expect("Settings init failed"));
 }
 
-#[derive(Debug, Deserialize, Serialize)]
-pub struct User {
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct Auth {
   pub username: String,
-  pub password: Option<String>,
+  pub password: String,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -30,9 +30,9 @@ pub struct Device {
   pub port: Option<u16>,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Clone, Serialize)]
 pub struct Settings {
-  pub user: Option<User>,
+  pub auth: Option<Auth>,
   pub devices: Vec<Device>,
 }
 
@@ -46,9 +46,9 @@ impl Settings {
       .get::<Vec<Device>>("devices")
       .unwrap_or(Vec::default());
 
-    let user = config.get::<User>("user").ok();
+    let auth = config.get::<Auth>("auth").ok();
 
-    let settings = Settings { user, devices };
+    let settings = Settings { auth, devices };
 
     log::debug!("Init settings: {:?}", settings);
     settings.save()?;
