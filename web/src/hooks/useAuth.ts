@@ -6,8 +6,8 @@ import { Auth } from '@/types/auth';
 type UseSaveAuthConfig = SWRMutationConfiguration<
 Auth,
 Error,
-Auth | null,
-'/auth/save'
+'/auth/save',
+Auth | null
 >;
 
 export function useAuth(config?: SWRConfiguration<Auth | null>) {

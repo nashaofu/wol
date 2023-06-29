@@ -9,6 +9,7 @@ Wol 是 wake on lan 的简写，是一个轻量、简介的 Wol 管理服务，�
 - 主题切换：支持浅色主题与暗黑主题。
 - 占用资源少，运行速度快。
 - 跨平台：可以在 Linux、macOS 和 Windows 操作系统上运行。
+- 支持 basic auth，保护服务配置
 
 ## 安装和使用
 
@@ -59,8 +60,10 @@ docker run -d \
 项目配置文件为`wol.yaml`，配置内容如下：
 
 ```yaml
-# 账号密码
-user: null
+# basic auth 配置，auth 可为 null，表示关闭认证
+auth:
+  username: ''
+  password: ''
 # 设备列表
 devices:
   - name: Windows # 设备名称

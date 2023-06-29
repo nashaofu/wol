@@ -7,8 +7,8 @@ import { Device } from '@/types/device';
 type UseSaveDevicesConfig = SWRMutationConfiguration<
 Device[],
 Error,
-Device[],
-'/device/save'
+'/device/save',
+Device[]
 >;
 
 export function useDevices(config?: SWRConfiguration<Device[]>) {
@@ -101,7 +101,7 @@ export function useDeleteDevice(config?: UseSaveDevicesConfig) {
 }
 
 export function useWakeDevice(
-  config?: SWRMutationConfiguration<void, Error, Device, '/device/wake'>,
+  config?: SWRMutationConfiguration<void, Error, '/device/wake', Device>,
 ) {
   return useSWRMutation(
     '/device/wake',

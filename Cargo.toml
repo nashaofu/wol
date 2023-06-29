@@ -6,17 +6,17 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-actix-files = "0.6.2"
-actix-web = "4.3.1"
-anyhow = "1.0.71"
-base64 = "0.21.2"
-clap = { version = "4.3.1", features = ["derive"] }
-config = "0.13.3"
-dotenv = "0.15.0"
-env_logger = "0.10.0"
-futures-util = { version = "0.3.28", default-features = false }
-lazy_static = "1.4.0"
-log = "0.4.18"
-serde = "1.0.163"
-serde_yaml = "0.9.21"
-surge-ping = "0.8.0"
+actix-files = "0.6"
+actix-web = "4.3"
+anyhow = "1.0"
+base64 = "0.21"
+clap = { version = "4.3", features = ["derive"] }
+config = "0.13"
+dotenv = "0.15"
+env_logger = "0.10"
+futures-util = { version = "0.3", default-features = false }
+lazy_static = "1.4"
+log = "0.4"
+serde = "1.0"
+serde_yaml = "0.9"
+surge-ping = "0.8"
