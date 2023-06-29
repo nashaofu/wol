@@ -6,7 +6,7 @@ import { Auth } from '@/types/auth';
 type UseSaveAuthConfig = SWRMutationConfiguration<
 Auth,
 Error,
-Auth,
+Auth | null,
 '/auth/save'
 >;
 
@@ -26,14 +26,14 @@ export function useSaveAuth(config?: UseSaveAuthConfig) {
 
   return useSWRMutation(
     '/auth/save',
-    async (url, { arg }: { arg: Auth }) => {
+    async (url, { arg }: { arg: Auth | null }) => {
       const resp = await fetcher.post<unknown, Auth>(url, arg);
       return resp;
     },
     {
       ...config,
       onSuccess: (resp, ...args) => {
-        config?.onSuccess(resp, ...args);
+        config?.onSuccess?.(resp, ...args);
         // 清理所有本地数据
         mutate(() => true, undefined, { revalidate: true });
       },

@@ -1,9 +1,8 @@
 import { useCallback, useEffect } from 'react';
 import {
- Form, Input, Modal, Switch
+  Form, Input, Modal, Switch,
 } from 'antd';
 import { get } from 'lodash-es';
-import { useSWRConfig } from 'swr';
 import useMessage from '@/hooks/useMessage';
 import { useAuth, useSaveAuth } from '@/hooks/useAuth';
 import { Auth } from '@/types/auth';
