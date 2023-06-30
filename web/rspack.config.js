@@ -24,10 +24,16 @@ module.exports = {
     html: [
       {
         template: "index.html",
-        favicon: "favicon.svg",
         minify: true,
       },
     ],
+    copy: {
+      patterns: [
+        {
+          from: "public",
+        },
+      ],
+    },
   },
   devServer: {
     historyApiFallback: true,
