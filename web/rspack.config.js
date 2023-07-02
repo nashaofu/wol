@@ -1,5 +1,4 @@
 const path = require("path");
-const { GenerateSW } = require("workbox-rspack-plugin");
 
 const prod = process.env.NODE_ENV === "production";
 
@@ -86,10 +85,4 @@ module.exports = {
       },
     ],
   },
-  plugins: [
-    new GenerateSW({
-      clientsClaim: true,
-      skipWaiting: true,
-    }),
-  ],
 };
