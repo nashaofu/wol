@@ -10,15 +10,25 @@ Wol 是 wake on lan 的简写，是一个轻量、简洁的 Wol 管理服务，�
 - 占用资源少，运行速度快。
 - 跨平台：可以在 Linux、macOS 和 Windows 操作系统上运行。
 - 支持 basic auth，保护服务配置
+- 支持 PWA，实现原生应用一样的体验
 
 ## 安装和使用
 
-### Docker 中使用（推荐）
+### Docker 中使用（Linux 推荐）
 
 推荐使用 Docker 安装方式，使用简单方便，只需运行如下命令：
 
 ```sh
 docker pull ghcr.io/nashaofu/wol:latest
+
+# 使用docker host模式
+docker run -d \
+  --name wol \
+  --net host \
+  -v /path/to/wol.yaml:/opt/wol/yaml \
+  ghcr.io/nashaofu/wol:latest
+
+# 不使用docker host模式
 docker run -d \
   --name wol \
   -p 3300:3300 \
@@ -30,20 +40,12 @@ docker run -d \
 
 如果需要自定义配置，可将项目根目录下的 `wol.example.yaml` 文件拷贝到 `/opt/wol` 目录下并重命名为 `wol.yaml`，具体配置参考配置章节，也可以修改启动命令，指定配置文件位置。
 
-### 系统中使用
+### 系统中使用(Windows/Mac 推荐)
 
-1. 前往[release](https://github.com/nashaofu/wol/releases)页面下载`wol-client.zip`与`wol-xxxx.zip`，`xxxx`表示系统架构，请根据自己的情况选择
-2. 新建一个目录`wol`,解压`wol-client.zip`到`wol/www`,解压`wol-xxxx.zip`到`wol`目录下，最终目录结构如下
+Windows/Mac 桌面版的 docker 不支持`--net=host`,所以推荐这种使用方式。
 
-   ```bash
-   .
-   ├── wol # wol-xxxx.zip
-   └── www # wol-client.zip
-       ├── ... # other files
-       └── index.html
-   ```
-
-3. 在终端中运行`./wol`即可启动服务。同时也支持在启动时指定服务的端口号与配置文件。
+1. 前往[release](https://github.com/nashaofu/wol/releases)页面下载`wol-xxxx.zip`，`xxxx`表示系统架构，请根据自己的情况选择
+2. 解压出`wol-xxxx.zip`中的可执行文件，然后在终端中运行即可启动服务。同时也支持在启动时指定服务的端口号与配置文件。
 
    ```bash
    Usage: wol [OPTIONS]
@@ -62,8 +64,8 @@ docker run -d \
 ```yaml
 # basic auth 配置，auth 可为 null，表示关闭认证
 auth:
-  username: ''
-  password: ''
+  username: ""
+  password: ""
 # 设备列表
 devices:
   - name: Windows # 设备名称

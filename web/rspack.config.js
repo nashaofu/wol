@@ -1,4 +1,5 @@
 const path = require("path");
+const { GenerateSW } = require("workbox-rspack-plugin");
 
 const prod = process.env.NODE_ENV === "production";
 
@@ -24,10 +25,16 @@ module.exports = {
     html: [
       {
         template: "index.html",
-        favicon: "favicon.svg",
         minify: true,
       },
     ],
+    copy: {
+      patterns: [
+        {
+          from: "public",
+        },
+      ],
+    },
   },
   devServer: {
     historyApiFallback: true,
@@ -79,4 +86,10 @@ module.exports = {
       },
     ],
   },
+  plugins: [
+    new GenerateSW({
+      clientsClaim: true,
+      skipWaiting: true,
+    }),
+  ],
 };

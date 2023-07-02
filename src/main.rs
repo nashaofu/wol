@@ -1,13 +1,12 @@
 pub mod api;
 pub mod args;
+pub mod asset;
 pub mod errors;
 pub mod middleware;
 pub mod settings;
 pub mod wol;
 
-use actix_files::{Files, NamedFile};
 use actix_web::{
-  dev::{fn_service, ServiceRequest, ServiceResponse},
   middleware::{Logger, NormalizePath},
   web, App, HttpServer,
 };
@@ -15,6 +14,7 @@ use dotenv::dotenv;
 use std::io;
 
 use args::ARGS;
+use asset::serve;
 use middleware::BasicAuth;
 
 #[actix_web::main]
@@ -34,17 +34,7 @@ async fn main() -> Result<(), io::Error> {
           .wrap(Logger::default())
           .configure(api::init),
       )
-      .service(
-        Files::new("/", "./www")
-          .index_file("index.html")
-          .use_etag(true)
-          .default_handler(fn_service(|req: ServiceRequest| async {
-            let (req, _) = req.into_parts();
-            let file = NamedFile::open_async("./www/index.html").await?;
-            let res = file.into_response(&req);
-            Ok(ServiceResponse::new(req, res))
-          })),
-      )
+      .default_service(web::to(serve))
   })
   .bind(("0.0.0.0", ARGS.port))?
   .run()
