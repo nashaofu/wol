@@ -112,8 +112,8 @@ jobs:
         run: yarn && yarn build
         working-directory: web
 
-      - name: Move web file
-        run: mv web/dist www
+      - name: Move web files to www
+        run: mv web/dist/* www
 
       - name: Build server
         uses: actions-rs/cargo@v1
