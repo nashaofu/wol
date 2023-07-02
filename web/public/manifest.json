@@ -1,5 +1,5 @@
 {
-  "name": "Wake-On-Lan",
+  "name": "Wol",
   "short_name": "Wol",
   "start_url": ".",
   "display": "standalone",
