@@ -6,11 +6,15 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-actix-web = "4.3"
+actix-web = { version = "4.3", default-features = false, features = ["macros"] }
 anyhow = "1.0"
 base64 = "0.21"
 clap = { version = "4.3", features = ["derive"] }
-config = "0.13"
+config = { version = "0.13", default-features = false, features = [
+  "ron",
+  "yaml",
+  "yaml-rust",
+] }
 dotenv = "0.15"
 env_logger = "0.10"
 futures-util = { version = "0.3", default-features = false }
