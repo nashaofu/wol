@@ -14,13 +14,13 @@ Wol 是 wake on lan 的简写，是一个轻量、简洁的 Wol 管理服务，�
 
 ## 项目截图
 
-| 截图                                                    | 说明         |
-| ------------------------------------------------------- | ------------ |
-| ![浅色主题](resources/screenshots/浅色主题.png)         | 浅色主题     |
-| ![深色主题](resources/screenshots/深色主题.png)         | 深色主题     |
-| ![添加新设备](resources/screenshots/添加新设备.png)     | 添加新设备   |
-| ![开启页面认证](resources/screenshots/开启页面认证.png) | 开启页面认证 |
-| ![页面认证](resources/screenshots/页面认证.png)         | 页面认证     |
+| 截图说明     | 截图                                                    |
+| ------------ | ------------------------------------------------------- |
+| 浅色主题     | ![浅色主题](resources/screenshots/浅色主题.png)         |
+| 深色主题     | ![深色主题](resources/screenshots/深色主题.png)         |
+| 添加新设备   | ![添加新设备](resources/screenshots/添加新设备.png)     |
+| 开启页面认证 | ![开启页面认证](resources/screenshots/开启页面认证.png) |
+| 页面认证     | ![页面认证](resources/screenshots/页面认证.png)         |
 
 ## 安装和使用
 
