@@ -10,7 +10,17 @@ Wol 是 wake on lan 的简写，是一个轻量、简洁的 Wol 管理服务，�
 - 占用资源少，运行速度快。
 - 跨平台：可以在 Linux、macOS 和 Windows 操作系统上运行。
 - 支持 basic auth，保护服务配置
-- 支持 PWA，实现原生应用一样的体验
+- 支持检测设备是否启动（设备需支持 ping）
+
+## 项目截图
+
+| 截图                                                    | 说明         |
+| ------------------------------------------------------- | ------------ |
+| ![浅色主题](resources/screenshots/浅色主题.png)         | 浅色主题     |
+| ![深色主题](resources/screenshots/深色主题.png)         | 深色主题     |
+| ![添加新设备](resources/screenshots/添加新设备.png)     | 添加新设备   |
+| ![开启页面认证](resources/screenshots/开启页面认证.png) | 开启页面认证 |
+| ![页面认证](resources/screenshots/页面认证.png)         | 页面认证     |
 
 ## 安装和使用
 

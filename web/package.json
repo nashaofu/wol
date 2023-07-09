@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "rspack serve",
     "watch": "tsc --watch",
-    "build": "npm run clean && npm run lint && tsc && rspack build && workbox generateSW",
+    "build": "npm run clean && npm run lint && tsc && rspack build",
     "clean": "rimraf dist",
     "lint": "eslint . --ext .js,.ts,.jsx,.tsx --fix"
   },
@@ -40,7 +40,6 @@
     "less": "^4.1.3",
     "less-loader": "^11.1.3",
     "rimraf": "^5.0.1",
-    "typescript": "^5.1.6",
-    "workbox-cli": "^7.0.0"
+    "typescript": "^5.1.6"
   }
 }
