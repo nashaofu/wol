@@ -1,7 +1,6 @@
 import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
 import { SWRConfig, Cache } from 'swr';
-import './sw';
 import './styles/index.less';
 
 import ErrorBoundary from './components/ErrorBoundary';
