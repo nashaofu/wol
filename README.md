@@ -35,14 +35,14 @@ docker pull ghcr.io/nashaofu/wol:latest
 docker run -d \
   --name wol \
   --net host \
-  -v /path/to/wol.yaml:/opt/wol/yaml \
+  -v /path/to/wol.yaml:/opt/wol/wol.yaml \
   ghcr.io/nashaofu/wol:latest
 
 # 不使用docker host模式
 docker run -d \
   --name wol \
   -p 3300:3300 \
-  -v /path/to/wol.yaml:/opt/wol/yaml \
+  -v /path/to/wol.yaml:/opt/wol/wol.yaml \
   ghcr.io/nashaofu/wol:latest
 ```
 
