@@ -4,6 +4,7 @@ export interface Device {
   mac: string;
   ip: string;
   port: number;
+  netmask: string;
 }
 
 export enum DeviceStatus {

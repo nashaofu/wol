@@ -68,6 +68,7 @@ export default function DeviceEdit({
         mac: device.mac,
         ip: device.ip,
         port: device.port,
+        netmask: device.netmask,
       });
     } else {
       form.resetFields();
@@ -142,8 +143,14 @@ export default function DeviceEdit({
         <Form.Item
           label="IP 地址"
           name="ip"
+          required
           validateFirst
           rules={[
+            {
+              type: 'string',
+              required: true,
+              message: '请输入 IP 地址',
+            },
             {
               type: 'string',
               pattern: /^(\d{1,3}\.){3}\d{1,3}$/,
@@ -174,6 +181,22 @@ export default function DeviceEdit({
           initialValue={9}
         >
           <InputNumber min={0} max={65535} />
+        </Form.Item>
+        <Form.Item
+          label="子网掩码"
+          name="netmask"
+          required
+          validateFirst
+          rules={[
+            {
+              type: 'string',
+              pattern: /^(\d{1,3}\.){3}\d{1,3}$/,
+              message: '请输入正确的子网掩码',
+            },
+          ]}
+          initialValue="255.255.255.0"
+        >
+          <Input showCount placeholder="255.255.255.0" />
         </Form.Item>
       </Form>
     </Modal>

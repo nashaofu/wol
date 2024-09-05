@@ -42,6 +42,7 @@ fn create_magic_packet(mac: [u8; 6]) -> [u8; 102] {
 pub struct WakeData {
   port: Option<u16>,
   mac: String,
+  netmask: String,
 }
 
 pub fn wake(data: &WakeData) -> Result<()> {
@@ -50,7 +51,7 @@ pub fn wake(data: &WakeData) -> Result<()> {
 
   let socket = UdpSocket::bind(("0.0.0.0", 0))?;
   socket.set_broadcast(true)?;
-  socket.send_to(&magic_packet, ("255.255.255.255", data.port.unwrap_or(9)))?;
+  socket.send_to(&magic_packet, (data.netmask.as_str(), data.port.unwrap_or(9)))?;
 
   Ok(())
 }
