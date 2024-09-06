@@ -1,16 +1,17 @@
-import { useCallback } from 'react';
-import { Layout, Switch, theme } from 'antd';
+import { useCallback } from "react";
+import { Layout, Switch, theme } from "antd";
 import {
-  BulbOutlined,
-  BulbFilled,
+  SunOutlined,
+  MoonOutlined,
   PlusCircleOutlined,
   LockOutlined,
-} from '@ant-design/icons';
-import useTheme, { ITheme } from '@/hooks/useTheme';
-import AuthEdit from '../AuthEdit';
-import DeviceEdit from '../DeviceEdit';
-import useBoolean from '@/hooks/useBoolean';
-import styles from './index.module.less';
+  GithubOutlined,
+} from "@ant-design/icons";
+import useTheme, { ITheme } from "@/hooks/useTheme";
+import AuthEdit from "../AuthEdit";
+import DeviceEdit from "../DeviceEdit";
+import useBoolean from "@/hooks/useBoolean";
+import styles from "./index.module.less";
 
 export default function Header() {
   const [themeValue, setThemeValue] = useTheme();
@@ -29,7 +30,7 @@ export default function Header() {
         setThemeValue(ITheme.Light);
       }
     },
-    [setThemeValue],
+    [setThemeValue]
   );
 
   return (
@@ -40,8 +41,8 @@ export default function Header() {
           <div className={styles.buttons}>
             <Switch
               checked={themeValue === ITheme.Dark}
-              checkedChildren={<BulbFilled />}
-              unCheckedChildren={<BulbOutlined />}
+              checkedChildren={<MoonOutlined />}
+              unCheckedChildren={<SunOutlined />}
               onChange={onThemeValueChange}
             />
             <div
@@ -59,6 +60,16 @@ export default function Header() {
               onClick={authEditActions.setTrue}
             >
               <LockOutlined />
+            </div>
+            <div
+              className={styles.button}
+              role="button"
+              tabIndex={0}
+              onClick={() =>
+                window.open("https://github.com/nashaofu/wol", "_blank")
+              }
+            >
+              <GithubOutlined />
             </div>
           </div>
         </div>

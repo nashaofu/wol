@@ -28,6 +28,7 @@ pub struct Device {
   pub mac: String,
   pub ip: String,
   pub port: Option<u16>,
+  pub netmask: String,
 }
 
 #[derive(Debug, Clone, Serialize)]

@@ -1,13 +1,11 @@
-import { useCallback, useEffect } from 'react';
-import {
-  Form, Input, Modal, InputNumber,
-} from 'antd';
-import { get } from 'lodash-es';
-import { Device } from '@/types/device';
-import useMessage from '@/hooks/useMessage';
-import { useAddDevice, useUpdateDevice } from '@/hooks/useDevices';
+import { useCallback, useEffect } from "react";
+import { Form, Input, Modal, InputNumber } from "antd";
+import { get } from "lodash-es";
+import { Device } from "@/types/device";
+import useMessage from "@/hooks/useMessage";
+import { useAddDevice, useUpdateDevice } from "@/hooks/useDevices";
 
-export type DeviceEditModel = Omit<Device, 'uid'>;
+export type DeviceEditModel = Omit<Device, "uid">;
 
 export interface DeviceEditProps {
   device?: Device | null;
@@ -27,21 +25,22 @@ export default function DeviceEdit({
   const { isMutating: addDeviceLoading, trigger: addDevice } = useAddDevice({
     onSuccess: () => {
       onOk();
-      message.success('添加成功');
+      message.success("添加成功");
     },
     onError: (err) => {
-      message.error(get(err, 'response.data.message', '添加失败'));
+      message.error(get(err, "response.data.message", "添加失败"));
     },
   });
-  const { isMutating: updateDeviceLoading, trigger: updateDevice } = useUpdateDevice({
-    onSuccess: () => {
-      onOk();
-      message.success('保存成功');
-    },
-    onError: (err) => {
-      message.error(get(err, 'response.data.message', '保存失败'));
-    },
-  });
+  const { isMutating: updateDeviceLoading, trigger: updateDevice } =
+    useUpdateDevice({
+      onSuccess: () => {
+        onOk();
+        message.success("保存成功");
+      },
+      onError: (err) => {
+        message.error(get(err, "response.data.message", "保存失败"));
+      },
+    });
 
   const loading = addDeviceLoading || updateDeviceLoading;
 
@@ -67,6 +66,7 @@ export default function DeviceEdit({
         name: device.name,
         mac: device.mac,
         ip: device.ip,
+        netmask: device.netmask,
         port: device.port,
       });
     } else {
@@ -77,7 +77,7 @@ export default function DeviceEdit({
 
   return (
     <Modal
-      title={device ? '编辑设备' : '添加设备'}
+      title={device ? "编辑设备" : "添加设备"}
       open={open}
       onOk={form.submit}
       onCancel={onCancel}
@@ -106,14 +106,14 @@ export default function DeviceEdit({
           validateFirst
           rules={[
             {
-              type: 'string',
+              type: "string",
               required: true,
-              message: '请填写设备名',
+              message: "请填写设备名",
             },
             {
-              type: 'string',
+              type: "string",
               max: 30,
-              message: '设备名长度不得超过 30 个字符',
+              message: "设备名长度不得超过 30 个字符",
             },
           ]}
         >
@@ -126,14 +126,14 @@ export default function DeviceEdit({
           validateFirst
           rules={[
             {
-              type: 'string',
+              type: "string",
               required: true,
-              message: '请输入 MAC 地址',
+              message: "请输入 MAC 地址",
             },
             {
-              type: 'string',
+              type: "string",
               pattern: /^([A-F0-9]{2}:){5}[A-F0-9]{2}$/,
-              message: '请输入正确的 MAC 地址',
+              message: "请输入正确的 MAC 地址",
             },
           ]}
         >
@@ -142,16 +142,38 @@ export default function DeviceEdit({
         <Form.Item
           label="IP 地址"
           name="ip"
+          required
           validateFirst
           rules={[
             {
-              type: 'string',
+              type: "string",
+              required: true,
+              message: "请输入 IP 地址",
+            },
+            {
+              type: "string",
               pattern: /^(\d{1,3}\.){3}\d{1,3}$/,
-              message: '请输入正确的 IP 地址',
+              message: "请输入正确的 IP 地址",
             },
           ]}
         >
           <Input showCount placeholder="192.168.1.1" />
+        </Form.Item>
+        <Form.Item
+          label="子网掩码"
+          name="netmask"
+          required
+          validateFirst
+          rules={[
+            {
+              type: "string",
+              pattern: /^(\d{1,3}\.){3}\d{1,3}$/,
+              message: "请输入正确的子网掩码",
+            },
+          ]}
+          initialValue="255.255.255.0"
+        >
+          <Input showCount placeholder="255.255.255.0" />
         </Form.Item>
         <Form.Item
           label="端口号"
@@ -160,15 +182,15 @@ export default function DeviceEdit({
           validateFirst
           rules={[
             {
-              type: 'number',
+              type: "number",
               required: true,
-              message: '请输入端口号',
+              message: "请输入端口号",
             },
             {
-              type: 'number',
+              type: "number",
               min: 0,
               max: 65535,
-              message: '请输入正确端口号',
+              message: "请输入正确端口号",
             },
           ]}
           initialValue={9}
