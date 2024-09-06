@@ -44,13 +44,12 @@ jobs:
             post-build: |
               md build
               copy target/x86_64-pc-windows-msvc/release/wol.exe build/wol.exe
-          # crate ring not support: https://github.com/briansmith/ring/issues/1167
-          # - target: aarch64-pc-windows-msvc
-          #   host: windows-latest
-          #   use-cross: false
-          #   post-build: |
-          #     md build
-          #     copy target/aarch64-pc-windows-msvc/release/wol.exe build/wol.exe
+          - target: aarch64-pc-windows-msvc
+            host: windows-latest
+            use-cross: false
+            post-build: |
+              md build
+              copy target/aarch64-pc-windows-msvc/release/wol.exe build/wol.exe
 
           - target: x86_64-unknown-linux-gnu
             host: ubuntu-latest
