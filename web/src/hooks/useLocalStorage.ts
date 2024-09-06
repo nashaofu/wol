@@ -7,7 +7,7 @@ function getLocalStorage<T>(key: string): T | undefined {
       return JSON.parse(raw) as T;
     }
   } catch (err) {
-    // eslint-disable-next-line no-console
+     
     console.error(err);
   }
 
@@ -45,7 +45,7 @@ export default function useLocalStorage<T>(
         try {
           localStorage.setItem(localStorageKey, JSON.stringify(value));
         } catch (err) {
-          // eslint-disable-next-line no-console
+           
           console.error(err);
         }
       }

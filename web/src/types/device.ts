@@ -3,11 +3,11 @@ export interface Device {
   name: string;
   mac: string;
   ip: string;
-  port: number;
   netmask: string;
+  port: number;
 }
 
 export enum DeviceStatus {
-  Online = 'Online',
-  Offline = 'Offline',
+  Online = "Online",
+  Offline = "Offline",
 }

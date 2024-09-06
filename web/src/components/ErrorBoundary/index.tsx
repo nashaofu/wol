@@ -1,5 +1,5 @@
-import { Component, ErrorInfo, ReactNode } from 'react';
-import ErrorElement from '../ErrorElement';
+import { Component, ErrorInfo, ReactNode } from "react";
+import ErrorElement from "../ErrorElement";
 
 export interface ErrorBoundaryProps {
   children: ReactNode;
@@ -10,8 +10,8 @@ export interface ErrorBoundaryState {
 }
 
 export default class ErrorBoundary extends Component<
-ErrorBoundaryProps,
-ErrorBoundaryState
+  ErrorBoundaryProps,
+  ErrorBoundaryState
 > {
   constructor(props: ErrorBoundaryProps) {
     super(props);
@@ -25,12 +25,12 @@ ErrorBoundaryState
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // You can also log the error to an error reporting service
-    // eslint-disable-next-line no-console
     console.log(error, errorInfo);
   }
 
   render() {
     const { error } = this.state;
+    // eslint-disable-next-line react/prop-types
     const { children } = this.props;
     if (error) {
       // You can render any custom fallback UI

@@ -1,5 +1,0 @@
-/dist
-.eslintrc.js
-rspack.config.js
-workbox-config.js
-/public/
