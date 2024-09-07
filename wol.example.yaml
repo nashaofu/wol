@@ -3,4 +3,5 @@ devices:
   - name: Windows
     mac: 00:00:00:00:00:00
     ip: 192.168.1.1
+    netmask: 255.255.255.0
     port: 9
