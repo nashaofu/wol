@@ -25,57 +25,61 @@ jobs:
         settings:
           - target: x86_64-apple-darwin
             host: macos-latest
-            use-cross: false
-            post-build: |
+            build: |
+              cargo build --release --target x86_64-apple-darwin && \
               mkdir build && \
               cp target/x86_64-apple-darwin/release/wol build/wol && \
               strip -x build/wol
           - target: aarch64-apple-darwin
             host: macos-latest
-            use-cross: false
-            post-build: |
+            build: |
+              cargo build --release --target aarch64-apple-darwin && \
               mkdir build && \
               cp target/aarch64-apple-darwin/release/wol build/wol && \
               strip -x build/wol
 
           - target: x86_64-pc-windows-msvc
             host: windows-latest
-            use-cross: false
-            post-build: |
+            build: |
+              cargo build --release --target x86_64-pc-windows-msvc
               md build
               copy target/x86_64-pc-windows-msvc/release/wol.exe build/wol.exe
           - target: aarch64-pc-windows-msvc
             host: windows-latest
-            use-cross: false
-            post-build: |
+            build: |
+              cargo build --release --target aarch64-pc-windows-msvc
               md build
               copy target/aarch64-pc-windows-msvc/release/wol.exe build/wol.exe
 
           - target: x86_64-unknown-linux-gnu
             host: ubuntu-latest
-            use-cross: true
-            post-build: |
+            build: |
+              cargo install cross --git https://github.com/cross-rs/cross && \
+              cross build --release --target x86_64-unknown-linux-gnu && \
               mkdir build && \
               cp target/x86_64-unknown-linux-gnu/release/wol build/wol && \
               strip -x build/wol
           - target: x86_64-unknown-linux-musl
             host: ubuntu-latest
-            use-cross: true
-            post-build: |
+            build: |
+              cargo install cross --git https://github.com/cross-rs/cross && \
+              cross build --release --target x86_64-unknown-linux-musl && \
               mkdir build && \
               cp target/x86_64-unknown-linux-musl/release/wol build/wol && \
               strip -x build/wol
 
           - target: aarch64-unknown-linux-gnu
             host: ubuntu-latest
-            use-cross: true
-            post-build: |
+            build: |
+              cargo install cross --git https://github.com/cross-rs/cross && \
+              cross build --release --target aarch64-unknown-linux-gnu && \
               mkdir build && \
               cp target/aarch64-unknown-linux-gnu/release/wol build/wol
           - target: aarch64-unknown-linux-musl
             host: ubuntu-latest
-            use-cross: true
-            post-build: |
+            build: |
+              cargo install cross --git https://github.com/cross-rs/cross && \
+              cross build --release --target aarch64-unknown-linux-musl && \
               mkdir build && \
               cp target/aarch64-unknown-linux-musl/release/wol build/wol
 
@@ -83,9 +87,9 @@ jobs:
     runs-on: ${{ matrix.settings.host }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Cache cargo
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ~/.cargo/bin/
@@ -95,14 +99,13 @@ jobs:
             target/
           key: ${{ runner.os }}-${{ matrix.settings.target }}-cargo-${{ hashFiles('**/Cargo.lock') }}
       - name: Install rust toolchain
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
           target: ${{ matrix.settings.target }}
-          override: true
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: latest
           cache: "yarn"
@@ -115,16 +118,10 @@ jobs:
         run: mv web/dist/* www
 
       - name: Build server
-        uses: actions-rs/cargo@v1
-        with:
-          use-cross: ${{ matrix.settings.use-cross }}
-          command: build
-          args: --release --target ${{ matrix.settings.target }}
-      - name: Post build
-        run: ${{ matrix.settings.post-build }}
+        run: ${{ matrix.settings.build }}
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: wol-${{ matrix.settings.target }}
           path: build/
@@ -134,11 +131,12 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - build
+    if: startsWith(github.ref, 'refs/tags/')
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Download all artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: artifacts
       - name: Display structure of downloaded files
@@ -151,8 +149,7 @@ jobs:
         run: ls -R
         working-directory: artifacts
       - name: Release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
         with:
           files: artifacts/*.zip
 
@@ -160,20 +157,19 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - publish
+    if: startsWith(github.ref, 'refs/tags/')
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup QEMU
-        uses: docker/setup-qemu-action@v2
-      # Workaround: https://github.com/docker/build-push-action/issues/461
-      - name: Setup docker buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-qemu-action@v3
 
-      # Login against a Docker registry except on PR
+      - name: Setup docker buildx
+        uses: docker/setup-buildx-action@v3
+
       # https://github.com/docker/login-action
-      - name: Login to registry ${{ env.REGISTRY }}
-        if: github.event_name != 'pull_request'
-        uses: docker/login-action@v2
+      - name: Login to ${{ env.REGISTRY }}
+        uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
@@ -184,5 +180,5 @@ jobs:
         with:
           context: .
           platforms: linux/amd64,linux/arm64
-          push: ${{ github.event_name != 'pull_request' }}
+          push: true
           tags: ${{ env.REGISTRY }}/nashaofu/wol:latest
