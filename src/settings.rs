@@ -2,7 +2,7 @@ use crate::args::ARGS;
 
 use std::{env, fs, path::PathBuf, sync::RwLock};
 
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use config::{Config, File};
 use lazy_static::lazy_static;
 use serde::{Deserialize, Serialize};
@@ -43,9 +43,30 @@ impl Settings {
       .add_source(File::with_name(&CONFIG_FILE.display().to_string()).required(false))
       .build()?;
 
-    let devices = config
-      .get::<Vec<Device>>("devices")
-      .unwrap_or(Vec::default());
+    let devices = match config.get::<Vec<Device>>("devices") {
+      Ok(devices) => devices,
+      Err(err) => {
+        log::error!("Failed get devices from config: {}", err);
+
+        if CONFIG_FILE.exists() {
+          let filename = CONFIG_FILE
+            .file_name()
+            .and_then(|name| name.to_str())
+            .ok_or(anyhow!("Failed get config file name"))?;
+
+          let target = CONFIG_FILE
+            .parent()
+            .ok_or(anyhow!("Failed get config file parent dirname"))?
+            .join(format!("{}.backup", filename));
+
+          log::info!("Backup config file {} to {}", CONFIG_FILE.display(), target.display());
+
+          fs::copy(CONFIG_FILE.as_path(), target)?;
+        }
+
+        Vec::new()
+      }
+    };
 
     let auth = config.get::<Auth>("auth").ok();
 
