@@ -54,7 +54,7 @@ jobs:
           - target: x86_64-unknown-linux-gnu
             host: ubuntu-latest
             build: |
-              cargo install cross --git https://github.com/cross-rs/cross && \
+              cargo install cross --force --git https://github.com/cross-rs/cross && \
               cross build --release --target x86_64-unknown-linux-gnu && \
               mkdir build && \
               cp target/x86_64-unknown-linux-gnu/release/wol build/wol && \
@@ -62,7 +62,7 @@ jobs:
           - target: x86_64-unknown-linux-musl
             host: ubuntu-latest
             build: |
-              cargo install cross --git https://github.com/cross-rs/cross && \
+              cargo install cross --force --git https://github.com/cross-rs/cross && \
               cross build --release --target x86_64-unknown-linux-musl && \
               mkdir build && \
               cp target/x86_64-unknown-linux-musl/release/wol build/wol && \
@@ -71,14 +71,14 @@ jobs:
           - target: aarch64-unknown-linux-gnu
             host: ubuntu-latest
             build: |
-              cargo install cross --git https://github.com/cross-rs/cross && \
+              cargo install cross --force --git https://github.com/cross-rs/cross && \
               cross build --release --target aarch64-unknown-linux-gnu && \
               mkdir build && \
               cp target/aarch64-unknown-linux-gnu/release/wol build/wol
           - target: aarch64-unknown-linux-musl
             host: ubuntu-latest
             build: |
-              cargo install cross --git https://github.com/cross-rs/cross && \
+              cargo install cross --force --git https://github.com/cross-rs/cross && \
               cross build --release --target aarch64-unknown-linux-musl && \
               mkdir build && \
               cp target/aarch64-unknown-linux-musl/release/wol build/wol
