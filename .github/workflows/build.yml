@@ -82,6 +82,13 @@ jobs:
               cross build --release --target aarch64-unknown-linux-musl && \
               mkdir build && \
               cp target/aarch64-unknown-linux-musl/release/wol build/wol
+          - target: armv7-unknown-linux-gnueabi
+            host: ubuntu-latest
+            build: |
+              cargo install cross --force --git https://github.com/cross-rs/cross && \
+              cross build --release --target armv7-unknown-linux-gnueabi && \
+              mkdir build && \
+              cp target/armv7-unknown-linux-gnueabi/release/wol build/wol
           - target: armv7-unknown-linux-gnueabihf
             host: ubuntu-latest
             build: |
@@ -89,6 +96,20 @@ jobs:
               cross build --release --target armv7-unknown-linux-gnueabihf && \
               mkdir build && \
               cp target/armv7-unknown-linux-gnueabihf/release/wol build/wol
+          - target: armv7-unknown-linux-musleabi
+            host: ubuntu-latest
+            build: |
+              cargo install cross --force --git https://github.com/cross-rs/cross && \
+              cross build --release --target armv7-unknown-linux-musleabi && \
+              mkdir build && \
+              cp target/armv7-unknown-linux-musleabi/release/wol build/wol
+          - target: armv7-unknown-linux-musleabihf
+            host: ubuntu-latest
+            build: |
+              cargo install cross --force --git https://github.com/cross-rs/cross && \
+              cross build --release --target armv7-unknown-linux-musleabihf && \
+              mkdir build && \
+              cp target/armv7-unknown-linux-musleabihf/release/wol build/wol
 
     name: build ${{ matrix.settings.target }}
     runs-on: ${{ matrix.settings.host }}
