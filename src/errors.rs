@@ -1,4 +1,4 @@
-use actix_web::{body::BoxBody, http::StatusCode, HttpResponse, ResponseError};
+use actix_web::{HttpResponse, ResponseError, body::BoxBody, http::StatusCode};
 use serde::Serialize;
 use serde_yaml;
 use std::{error::Error, fmt, io, net::AddrParseError, result, sync::PoisonError};
@@ -16,7 +16,7 @@ pub struct AppError {
 impl fmt::Display for AppError {
   // This trait requires `fmt` with this exact signature.
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-    write!(f, "AppError{:?}", self)
+    write!(f, "AppError{self:?}")
   }
 }
 
@@ -55,42 +55,42 @@ impl ResponseError for AppError {
 
 impl From<anyhow::Error> for AppError {
   fn from(err: anyhow::Error) -> Self {
-    log::error!("anyhow::Error {}", err);
+    log::error!("anyhow::Error {err}");
     AppError::new(StatusCode::INTERNAL_SERVER_ERROR, 500, err.to_string())
   }
 }
 
 impl From<AddrParseError> for AppError {
   fn from(err: AddrParseError) -> Self {
-    log::error!("AddrParseError {}", err);
+    log::error!("AddrParseError {err}");
     AppError::new(StatusCode::INTERNAL_SERVER_ERROR, 500, err.to_string())
   }
 }
 
 impl From<SurgeError> for AppError {
   fn from(err: SurgeError) -> Self {
-    log::error!("SurgeError {}", err);
+    log::error!("SurgeError {err}");
     AppError::new(StatusCode::INTERNAL_SERVER_ERROR, 500, err.to_string())
   }
 }
 
 impl<T> From<PoisonError<T>> for AppError {
   fn from(err: PoisonError<T>) -> Self {
-    log::error!("PoisonError<T> {}", err);
+    log::error!("PoisonError<T> {err}");
     AppError::new(StatusCode::INTERNAL_SERVER_ERROR, 500, err.to_string())
   }
 }
 
 impl From<io::Error> for AppError {
   fn from(err: io::Error) -> Self {
-    log::error!("io::Error {}", err);
+    log::error!("io::Error {err}");
     AppError::new(StatusCode::INTERNAL_SERVER_ERROR, 500, err.to_string())
   }
 }
 
 impl From<serde_yaml::Error> for AppError {
   fn from(err: serde_yaml::Error) -> Self {
-    log::error!("serde_yaml::Error {}", err);
+    log::error!("serde_yaml::Error {err}");
     AppError::new(StatusCode::INTERNAL_SERVER_ERROR, 500, err.to_string())
   }
 }

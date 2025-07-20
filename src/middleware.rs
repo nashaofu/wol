@@ -1,20 +1,20 @@
 use std::{
   fmt,
-  future::{ready, Ready},
+  future::{Ready, ready},
   rc::Rc,
 };
 
 use actix_web::{
-  body::BoxBody,
-  dev::{forward_ready, Service, ServiceRequest, ServiceResponse, Transform},
-  http::{
-    header::{AUTHORIZATION, WWW_AUTHENTICATE},
-    StatusCode,
-  },
   Error, HttpResponse, ResponseError,
+  body::BoxBody,
+  dev::{Service, ServiceRequest, ServiceResponse, Transform, forward_ready},
+  http::{
+    StatusCode,
+    header::{AUTHORIZATION, WWW_AUTHENTICATE},
+  },
 };
-use anyhow::{anyhow, Result};
-use base64::prelude::{Engine, BASE64_STANDARD};
+use anyhow::{Result, anyhow};
+use base64::prelude::{BASE64_STANDARD, Engine};
 use futures_util::future::LocalBoxFuture;
 
 use crate::{errors::AppError, settings::SETTINGS};
@@ -46,12 +46,12 @@ fn parse_header(req: &ServiceRequest) -> Result<(String, String)> {
   let user_id = credentials
     .next()
     .ok_or(anyhow!("failed get user_id"))
-    .map(|user_id| user_id.to_string().into())?;
+    .map(|user_id| user_id.to_string())?;
 
   let password = credentials
     .next()
     .ok_or(anyhow!("failed get password"))
-    .map(|password| password.to_string().into())?;
+    .map(|password| password.to_string())?;
 
   Ok((user_id, password))
 }
@@ -106,7 +106,7 @@ where
     Box::pin(async move {
       let auth = {
         // 确保锁被释放掉, 否则 RwLock 会死锁
-        let auth = &SETTINGS.read().map_err(|err| AppError::from(err))?.auth;
+        let auth = &SETTINGS.read().map_err(AppError::from)?.auth;
 
         auth.clone()
       };
@@ -132,7 +132,7 @@ pub struct BasicAuthError;
 impl fmt::Display for BasicAuthError {
   // This trait requires `fmt` with this exact signature.
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-    write!(f, "BasicAuthError{:?}", self)
+    write!(f, "BasicAuthError{self:?}")
   }
 }
 

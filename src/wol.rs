@@ -1,4 +1,4 @@
-use anyhow::{anyhow, Result};
+use anyhow::{Result, anyhow};
 use serde::{Deserialize, Serialize};
 use std::{net::UdpSocket, result::Result as StdResult};
 
@@ -43,7 +43,7 @@ fn create_magic_packet(mac: [u8; 6]) -> [u8; 102] {
 fn ip_to_u32(ip: &str) -> Result<u32> {
   let parts = ip
     .split('.')
-    .map(|src| u32::from_str_radix(src, 10))
+    .map(|src| src.parse::<u32>())
     .collect::<StdResult<Vec<u32>, _>>()?;
 
   if parts.len() != 4 {
@@ -88,10 +88,10 @@ pub fn wake(data: &WakeData) -> Result<()> {
   let mac = parse_mac(&data.mac)?;
   let magic_packet = create_magic_packet(mac);
 
-  log::info!("wake magic packet {:?}", magic_packet);
+  log::info!("wake magic packet {magic_packet:?}");
 
   let broadcast = calculate_broadcast(&data.ip, &data.netmask)?;
-  log::info!("wake broadcast address {}", broadcast);
+  log::info!("wake broadcast address {broadcast}");
 
   let socket = UdpSocket::bind(("0.0.0.0", 0))?;
   socket.set_broadcast(true)?;
