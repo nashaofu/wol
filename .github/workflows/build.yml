@@ -142,6 +142,7 @@ jobs:
         with:
           node-version: latest
           cache: "pnpm"
+          cache-dependency-path: web/pnpm-lock.yaml
       - name: Build web
         run: pnpm i && pnpm build
         working-directory: web
