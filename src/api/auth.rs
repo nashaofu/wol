@@ -3,7 +3,7 @@ use crate::{
   settings::{Auth, SETTINGS},
 };
 
-use actix_web::{get, post, web, HttpResponse, Responder};
+use actix_web::{HttpResponse, Responder, get, post, web};
 use serde::{Deserialize, Serialize};
 
 #[get("/info")]

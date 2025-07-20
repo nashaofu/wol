@@ -1,7 +1,7 @@
 [package]
 name = "wol"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -13,7 +13,10 @@ actix-web = { version = "4.11.0", default-features = false, features = [
 anyhow = "1.0.98"
 base64 = "0.22.1"
 clap = { version = "4.5.41", features = ["derive"] }
-config = { version = "0.15.13", default-features = false, features = ["ron", "yaml"] }
+config = { version = "0.15.13", default-features = false, features = [
+  "ron",
+  "yaml",
+] }
 dotenv = "0.15"
 env_logger = "0.11.8"
 futures-util = { version = "0.3.31", default-features = false }

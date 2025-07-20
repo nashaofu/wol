@@ -7,8 +7,9 @@ pub mod settings;
 pub mod wol;
 
 use actix_web::{
+  App, HttpServer,
   middleware::{Logger, NormalizePath},
-  web, App, HttpServer,
+  web,
 };
 use dotenv::dotenv;
 use std::io;

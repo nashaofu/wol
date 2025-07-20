@@ -2,7 +2,7 @@ use crate::args::ARGS;
 
 use std::{env, fs, path::PathBuf, sync::RwLock};
 
-use anyhow::{anyhow, Result};
+use anyhow::{Result, anyhow};
 use config::{Config, File};
 use lazy_static::lazy_static;
 use serde::{Deserialize, Serialize};
@@ -46,7 +46,7 @@ impl Settings {
     let devices = match config.get::<Vec<Device>>("devices") {
       Ok(devices) => devices,
       Err(err) => {
-        log::error!("Failed get devices from config: {}", err);
+        log::error!("Failed get devices from config: {err}");
 
         if CONFIG_FILE.exists() {
           let filename = CONFIG_FILE
@@ -57,9 +57,13 @@ impl Settings {
           let target = CONFIG_FILE
             .parent()
             .ok_or(anyhow!("Failed get config file parent dirname"))?
-            .join(format!("{}.backup", filename));
+            .join(format!("{filename}.backup"));
 
-          log::info!("Backup config file {} to {}", CONFIG_FILE.display(), target.display());
+          log::info!(
+            "Backup config file {} to {}",
+            CONFIG_FILE.display(),
+            target.display()
+          );
 
           fs::copy(CONFIG_FILE.as_path(), target)?;
         }
@@ -72,14 +76,14 @@ impl Settings {
 
     let settings = Settings { auth, devices };
 
-    log::debug!("Init settings: {:?}", settings);
+    log::debug!("Init settings: {settings:?}");
     settings.save()?;
     Ok(settings)
   }
 
   pub fn save(self: &Settings) -> Result<()> {
     let yaml = serde_yaml::to_string(&self)?;
-    fs::write(&CONFIG_FILE.to_path_buf(), yaml)?;
+    fs::write(CONFIG_FILE.to_path_buf(), yaml)?;
     Ok(())
   }
 }

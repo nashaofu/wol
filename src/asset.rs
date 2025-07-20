@@ -1,4 +1,4 @@
-use actix_web::{error::ErrorNotFound, HttpRequest, HttpResponse, Responder, Result};
+use actix_web::{HttpRequest, HttpResponse, Responder, Result, error::ErrorNotFound};
 use rust_embed::RustEmbed;
 
 #[derive(RustEmbed)]

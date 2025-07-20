@@ -117,13 +117,13 @@ devices:
    git checkout -b my-feature-branch
    ```
 
-3. 启动项目：你需要安装 rust、nodejs 与 yarn
+3. 启动项目：你需要安装 rust、nodejs 与 pnpm
 
    ```sh
    # 启动服务端项目
    cargo run
    # 启动前端项目
-   cd client && yarn && yarn dev
+   cd client && pnpm i && pnpm dev
    ```
 
 4. 修改并提交代码：
