@@ -6,21 +6,20 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-actix-web = { version = "4.9", default-features = false, features = ["macros", "compat"] }
-anyhow = "1.0"
-base64 = "0.22"
-clap = { version = "4.5", features = ["derive"] }
-config = { version = "0.14", default-features = false, features = [
-  "ron",
-  "yaml",
-  "yaml-rust",
+actix-web = { version = "4.11.0", default-features = false, features = [
+  "macros",
+  "compat",
 ] }
+anyhow = "1.0.98"
+base64 = "0.22.1"
+clap = { version = "4.5.41", features = ["derive"] }
+config = { version = "0.15.13", default-features = false, features = ["ron", "yaml"] }
 dotenv = "0.15"
-env_logger = "0.11"
-futures-util = { version = "0.3", default-features = false }
+env_logger = "0.11.8"
+futures-util = { version = "0.3.31", default-features = false }
 lazy_static = "1.5"
-log = "0.4"
-rust-embed = { version = "8.5", features = ["mime-guess"] }
-serde = { version = "1.0", features = ["derive"] }
-serde_yaml = "0.9"
-surge-ping = "0.8"
+log = "0.4.27"
+rust-embed = { version = "8.7.2", features = ["mime-guess"] }
+serde = { version = "1.0.219", features = ["derive"] }
+serde_yaml = "0.9.33"
+surge-ping = "0.8.2"

@@ -49,6 +49,7 @@ export default function DeviceEdit({
     if (device) {
       updateDevice({
         ...deviceModel,
+        mac: deviceModel.mac.toUpperCase(),
         uid: device.uid,
       });
     } else {
@@ -64,7 +65,7 @@ export default function DeviceEdit({
     if (device) {
       form.setFieldsValue({
         name: device.name,
-        mac: device.mac,
+        mac: device.mac.toUpperCase(),
         ip: device.ip,
         netmask: device.netmask,
         port: device.port,
@@ -132,7 +133,7 @@ export default function DeviceEdit({
             },
             {
               type: "string",
-              pattern: /^([A-F0-9]{2}:){5}[A-F0-9]{2}$/,
+              pattern: /^([A-Fa-f0-9]{2}:){5}[A-Fa-f0-9]{2}$/,
               message: "请输入正确的 MAC 地址",
             },
           ]}
